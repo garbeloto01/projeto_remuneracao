@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ferramenta de Remuneração Variável</title>
+    
+        <!-- Scripts externos (Tailwind e Chart.js) -->
+       <!-- Scripts externos (Tailwind e Chart.js) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <!-- ESTA É A LINHA QUE FALTA: Conecta o seu arquivo CSS -->
+        <link rel="stylesheet" href="styles.css">
+    
+        <!-- Fontes do Google -->
+     <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap)" rel="stylesheet">
+    </head>
+
+
+<body class="bg-gray-100">
+
+    <!-- Tela de Login -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm p-8 rounded-lg shadow-xl border border-gray-200 relative">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Login - Remuneração Variável</h2>
+            
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="login-username" class="block text-sm font-medium text-gray-700 mb-1">Usuário</label>
+                    <input type="text" id="login-username" class="w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
+                </div>
+                <div class="mb-6">
+                    <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                    <input type="password" id="login-password" class="w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
+                </div>
+                <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150">Entrar</button>
+                <p id="login-error" class="text-red-500 text-sm text-center mt-4 hidden">Usuário ou senha inválidos.</p>
+            </form>
+
+            <!-- Botão de Cadastro Master -->
+            <div id="master-register-container" class="mt-6 text-center hidden border-t pt-4">
+                <p class="text-sm text-gray-600 mb-2">Primeiro acesso?</p>
+                <button type="button" id="btn-register-master" class="text-sm text-red-600 font-bold hover:underline">CADASTRAR USUÁRIO MASTER</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <div id="app-content" class="hidden">
+        <header class="bg-white shadow-md border-b border-gray-200">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <svg class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    <h1 class="text-xl font-bold text-gray-800">Ferramenta de Remuneração Variável</h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button id="btn-view-launch" class="text-gray-600 hover:text-red-600 flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-red-50">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0c-1.657 0-3-.895-3-2s1.343-2 3-2 3-.895 3-2-1.343-2-3-2m0 8c-1.11 0-2.08-.402-2.599-1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 15c-1.11 0-2.08-.402-2.599-1M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7v1.522c0 .414.336.75.75.75h14.5a.75.75 0 00.75-.75V7" /></svg>
+                        <span>Lançamento</span>
+                    </button>
+                    <button id="btn-view-reports" class="text-gray-600 hover:text-red-600 flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-red-50">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
+                        <span>Relatórios</span>
+                    </button>
+                    <button id="btn-view-admin" class="hidden text-gray-600 hover:text-red-600 flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-red-50">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <span>Painel de Gestão</span>
+                    </button>
+                    <button id="btn-change-password" class="text-gray-600 hover:text-red-600 flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-red-50">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+                        <span>Senha</span>
+                    </button>
+                    <button id="btn-logout" class="text-gray-600 hover:text-red-600 flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-red-50">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                        <span>Sair</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="container mx-auto p-4 max-w-7xl">
+            <!-- ... (admin controls and other views remain exactly the same) ... -->
+            <div id="admin-controls" class="hidden bg-white p-4 rounded-lg shadow border border-gray-200 mb-6">
+                <div class="flex flex-wrap justify-end items-center gap-3">
+                    <p id="user-id-log" class="hidden text-sm font-medium text-gray-600 mr-auto">Seu ID de Usuário (para log): <span class="font-mono bg-gray-200 text-gray-800 px-2 py-0.5 rounded-md" id="current-user-id-display">Carregando...</span></p>
+                    
+                    <button type="button" id="btn-open-supervisor-modal" class="hidden flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition duration-150">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        <span>+ Cadastrar Gestão</span>
+                    </button>
+                    <button type="button" id="btn-open-sector-modal" class="hidden flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-green-700 transition duration-150">
+                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                        <span>+ Cadastrar Setor</span>
+                    </button>
+                    <button type="button" id="btn-open-employee-modal" class="hidden flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700 transition duration-150">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+                        <span>+ Cadastrar Colaborador</span>
+                    </button>
+                    <button type="button" id="btn-manage-sector-indices" class="hidden flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-md font-semibold hover:bg-orange-600 transition duration-150">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.072-.267-2.09-.75-3.042z" /></svg>
+                        <span>Gerenciar Metas</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visão: Lançamento -->
+            <div id="view-launch" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-1 bg-white p-6 rounded-lg shadow border border-gray-200 h-fit">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6">Novo Lançamento</h2>
+                    <form id="launch-form">
+                        <div class="space-y-5">
+                            <div>
+                                <label for="month-ref" class="block text-sm font-medium text-gray-700">Mês de Referência (Filtro)</label>
+                                <input type="month" id="month-ref" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                            </div>
+                            <div id="sector-filter-container" class="hidden">
+                                <label for="sector-filter" class="block text-sm font-medium text-gray-700">Filtrar por Setor</label>
+                                <select id="sector-filter" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 bg-white">
+                                    <option value="all">Todos os Setores</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="base-value" class="block text-sm font-medium text-gray-700">Valor Base Variável (R$)</label>
+                                <div class="mt-1 flex gap-2">
+                                    <input type="number" id="base-value" placeholder="Ex: 1000.00" class="flex-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                                    <button type="button" id="btn-save-base-value" class="hidden bg-green-600 text-white px-5 py-2 rounded-md font-semibold hover:bg-green-700 transition duration-150">Salvar</button>
+                                </div>
+                                 <p id="base-value-loading" class="text-sm text-gray-500 mt-1 hidden">Carregando valor...</p>
+                            </div>
+                            <div id="supervisor-launch-fields" class="hidden space-y-5">
+                                <hr>
+                                <div>
+                                    <label for="employee-select" class="block text-sm font-medium text-gray-700">Colaborador</label>
+                                    <select id="employee-select" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 bg-white">
+                                        <option value="">-- Selecione um colaborador --</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Insira as pontuações</label>
+                                    <div id="indices-container" class="mt-2 p-4 bg-gray-50 border border-gray-200 rounded-md min-h-[100px] flex items-center justify-center">
+                                        <p class="text-sm text-gray-500">Selecione um colaborador para ver os índices de pontuação.</p>
+                                    </div>
+                                </div>
+                                <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg text-center">
+                                    <p class="text-sm font-medium text-blue-700">Total Variável Calculado:</p>
+                                    <p id="total-calculated" class="text-3xl font-bold text-red-600 mt-1">R$ 0,00</p>
+                                </div>
+                                <button type="submit" id="btn-submit-launch" class="w-full bg-red-600 text-white py-3 px-4 rounded-md font-semibold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150 text-lg">Lançar Remuneração</button>
+                                <button type="button" id="btn-cancel-edit" class="hidden w-full bg-gray-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-gray-700 transition duration-150">Cancelar Edição</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="md:col-span-2 bg-white p-6 rounded-lg shadow border border-gray-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">Histórico de Lançamentos</h2>
+                        <button id="btn-download-csv" class="flex items-center gap-2 bg-white text-gray-700 px-3 py-1.5 rounded-md border border-gray-300 hover:bg-gray-50 transition duration-150 text-sm">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                            <span>Download CSV</span>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table id="historyTable" class="min-w-full divide-y divide-gray-200 border">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th data-sort="monthRef" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mês Ref. <span class="sort-arrow"></span></th>
+                                    <th data-sort="employeeName" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Colaborador <span class="sort-arrow"></span></th>
+                                    <th data-sort="sectorName" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Setor <span class="sort-arrow"></span></th>
+                                    <th data-sort="baseValue" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Base (R$) <span class="sort-arrow"></span></th>
+                                    <th data-sort="totalValue" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total (R$) <span class="sort-arrow"></span></th>
+                                    <th data-sort="createdAt" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lançado Em <span class="sort-arrow"></span></th>
+                                    <th data-sort="details" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalhes <span class="sort-arrow"></span></th>
+                                    <th id="history-action-header" data-sort="action" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ação <span class="sort-arrow"></span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body" class="bg-white divide-y divide-gray-200">
+                                <tr id="history-loading"><td colspan="8" class="text-center py-6 text-gray-500">Carregando histórico...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Visão: Relatórios de Evolução (ATUALIZADO) -->
+            <div id="view-reports" class="hidden bg-white p-6 rounded-lg shadow border border-gray-200">
+                 <div class="flex flex-wrap justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">Relatório de Evolução (Variável)</h2>
+                    <div id="report-filter-container">
+                        <label for="report-employee-filter" class="mr-2 text-sm font-medium text-gray-700">Visualizar:</label>
+                        <select id="report-employee-filter" class="px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 bg-white text-sm w-64">
+                            <!-- Opções populadas via JS -->
+                        </select>
+                    </div>
+                </div>
+                <div class="relative h-[400px] w-full">
+                    <canvas id="evolutionChart"></canvas>
+                </div>
+                 <div class="mt-4 text-sm text-gray-500 text-center">
+                    * Exibindo evolução da remuneração variável ao longo do tempo.
+                </div>
+            </div>
+
+            <!-- Visão: Painel de Gestão -->
+            <div id="view-admin" class="hidden">
+                <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Painel de Gestão (Admin Master)</h2>
+                    <div class="border-b border-gray-200 mb-6">
+                        <nav class="flex -mb-px" aria-label="Tabs">
+                            <button class="tab-button active" data-tab="supervisors">Supervisores</button>
+                            <button class="tab-button" data-tab="sectors">Setores</button>
+                            <button class="tab-button" data-tab="employees">Colaboradores</button>
+                        </nav>
+                    </div>
+                    <div>
+                        <div id="tab-supervisors" class="tab-content active">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 border">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuário (Login)</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Setor</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="supervisors-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="tab-sectors" class="tab-content">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 border">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome do Setor</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Índices Definidos</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sectors-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="tab-employees" class="tab-content">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 border">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Setor</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="employees-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modais -->
+    <div id="change-password-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-change-pass-modal">&times;</span>
+            <h2 class="text-xl font-bold mb-6 text-gray-900">Trocar Senha</h2>
+            <form id="change-password-form">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Senha Atual</label>
+                        <input type="password" id="cp-old-password" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Nova Senha</label>
+                        <input type="password" id="cp-new-password" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
+                        <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres, com maiúscula, minúscula, número e especial (@, #, $, etc).</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Confirmar Nova Senha</label>
+                        <input type="password" id="cp-confirm-password" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" id="cancel-change-pass" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-semibold hover:bg-gray-300 transition duration-150">Cancelar</button>
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition duration-150">Alterar Senha</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="master-registration-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-master-reg">&times;</span>
+            <h2 class="text-xl font-bold mb-6 text-red-600">Cadastro de Usuário Master</h2>
+            <p class="text-sm text-gray-600 mb-4">Defina o usuário e senha para o acesso administrativo principal. <strong>Isso só pode ser feito uma vez.</strong></p>
+            <form id="master-registration-form">
+                <div class="space-y-4">
+                    <div>
+                        <label for="reg-master-username" class="block text-sm font-medium text-gray-700">Usuário</label>
+                        <input type="text" id="reg-master-username" value="admin" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
+                    </div>
+                    <div>
+                        <label for="reg-master-password" class="block text-sm font-medium text-gray-700">Senha</label>
+                        <input type="password" id="reg-master-password" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required minlength="6">
+                    </div>
+                    <div>
+                        <label for="reg-master-confirm" class="block text-sm font-medium text-gray-700">Confirmar Senha</label>
+                        <input type="password" id="reg-master-confirm" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required minlength="6">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" id="cancel-master-reg" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-semibold hover:bg-gray-300 transition duration-150">Cancelar</button>
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition duration-150">Salvar Master</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="supervisor-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-supervisor-modal">&times;</span>
+            <h2 class="text-xl font-bold mb-6" id="supervisor-modal-title">Cadastrar Novo Supervisor</h2>
+            <form id="supervisor-form">
+                <input type="hidden" id="edit-supervisor-id">
+                <div class="space-y-4">
+                    <div>
+                        <label for="supervisor-name" class="block text-sm font-medium text-gray-700">Nome do Supervisor</label>
+                        <input type="text" id="supervisor-name" placeholder="Ex: Maria Gestora" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
+                    </div>
+                    <div>
+                        <label for="supervisor-sector" class="block text-sm font-medium text-gray-700">Setor do Supervisor</label>
+                        <div class="flex gap-2 items-center">
+                            <select id="supervisor-sector" class="flex-1 mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 bg-white" required>
+                                <option value="">-- Selecione um setor --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="supervisor-username" class="block text-sm font-medium text-gray-700">Usuário (para login)</label>
+                        <input type="text" id="supervisor-username" placeholder="Ex: maria.gestora" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
+                    </div>
+                    <div>
+                        <label for="supervisor-password" class="block text-sm font-medium text-gray-700">Senha (para login)</label>
+                        <input type="password" id="supervisor-password" placeholder="Mínimo 6 caracteres" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
+                        <div class="flex items-center mt-2">
+                            <input type="checkbox" id="show-password" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                            <label for="show-password" class="ml-2 block text-sm text-gray-900">Mostrar senha</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" id="cancel-supervisor-modal" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-semibold hover:bg-gray-300 transition duration-150">Cancelar</button>
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition duration-150">Salvar Supervisor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="sector-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-sector-modal">&times;</span>
+            <h2 class="text-xl font-bold mb-6" id="sector-modal-title">Cadastrar Novo Setor</h2>
+            <form id="sector-form">
+                <input type="hidden" id="edit-sector-id">
+                <div class="space-y-4">
+                    <div>
+                        <label for="sector-name" class="block text-sm font-medium text-gray-700">Nome do Setor</label>
+                        <input type="text" id="sector-name" placeholder="Ex: Vendas" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" id="cancel-sector-modal" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-semibold hover:bg-gray-300 transition duration-150">Cancelar</button>
+                    <button type="submit" id="btn-submit-sector-form" class="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition duration-150">Salvar Setor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="sector-indices-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-sector-indices-modal">&times;</span>
+            <h2 class="text-xl font-bold mb-6">Gerenciar Metas (Índices)</h2>
+            <form id="sector-indices-form">
+                <input type="hidden" id="edit-indices-sector-id">
+                <div class="space-y-4">
+                    <div>
+                        <label for="sector-indices-name" class="block text-sm font-medium text-gray-700">Setor</label>
+                        <input type="text" id="sector-indices-name" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm bg-gray-100" readonly>
+                    </div>
+                    <hr>
+                    <label class="block text-sm font-medium text-gray-700">Defina os Índices:</label>
+                    <div id="indices-list" class="space-y-3 max-h-60 overflow-y-auto pr-2"></div>
+                    <button type="button" id="add-index-field" class="text-sm text-red-600 font-semibold hover:text-red-800">+ Adicionar Índice</button>
+                    <div class="flex justify-end items-center mt-4 pt-4 border-t">
+                        <span id="indices-total-percentage" class="text-lg font-bold text-gray-800">Total: 0%</span>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" id="cancel-sector-indices-modal" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-semibold hover:bg-gray-300 transition duration-150">Cancelar</button>
+                    <button type="submit" id="btn-submit-indices-form" class.disabled="true" class="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed">Salvar Índices</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="employee-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-employee-modal">&times;</span>
+            <h2 class="text-xl font-bold mb-6" id="employee-modal-title">Cadastrar Novo Colaborador</h2>
+            <form id="employee-form">
+                <input type="hidden" id="edit-employee-id">
+                <div class="space-y-4">
+                    <div>
+                        <label for="employee-name" class="block text-sm font-medium text-gray-700">Nome do Colaborador</label>
+                        <input type="text" id="employee-name" placeholder="Ex: João da Silva" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
+                    </div>
+                    <div>
+                        <label for="employee-sector" class="block text-sm font-medium text-gray-700">Setor do Colaborador</label>
+                        <select id="employee-sector" class="mt-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 bg-white" required>
+                            <option value="">-- Selecione um setor --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" id="cancel-employee-modal" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-semibold hover:bg-gray-300 transition duration-150">Cancelar</button>
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition duration-150">Salvar Colaborador</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="delete-confirm-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold text-gray-900">Confirmar Exclusão</h2>
+            <p class="text-gray-600 mt-4 mb-6" id="delete-confirm-message">Você tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.</p>
+            <div class="flex justify-end gap-3">
+                <button type="button" id="btn-cancel-delete" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-semibold hover:bg-gray-300 transition duration-150">Cancelar</button>
+                <button type="button" id="btn-confirm-delete" class="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition duration-150">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="alert-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold text-gray-900" id="alert-title">Aviso</h2>
+            <p class="text-gray-600 mt-4 mb-6" id="alert-message">Mensagem de aviso.</p>
+            <div class="flex justify-end">
+                <button type="button" id="btn-close-alert" class="bg-red-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-700 transition duration-150">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="vacation-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold text-gray-900">Status do Colaborador</h2>
+            <p class="text-gray-600 mt-4 mb-6" id="vacation-message">O colaborador [Nome] está ou esteve de férias neste mês de referência?</p>
+            <div class="flex justify-end gap-3">
+                <button type="button" id="btn-vacation-no" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-semibold hover:bg-gray-300 transition duration-150">Não (Lançar Notas)</button>
+                <button type="button" id="btn-vacation-yes" class="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700 transition duration-150">Sim (Lançar Férias R$ 0,00)</button>
+            </div>
+        </div>
+    </div>
+     <!-- Chama o seu arquivo Javascript -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
+
