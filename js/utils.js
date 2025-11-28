@@ -22,8 +22,15 @@ function simpleHashFallback(str) {
 }
 
 // Formata Data
-export const formatDate = (timestamp) => {
-    return timestamp instanceof Date ? timestamp.toLocaleDateString('pt-BR') : '-';
+export const formatDate = (dateInput) => {
+    if (!dateInput) return '-';
+    // Se já for objeto Date
+    if (dateInput instanceof Date) return dateInput.toLocaleDateString('pt-BR');
+    // Se for Timestamp do Firestore (caso escape da conversão anterior)
+    if (dateInput.toDate) return dateInput.toDate().toLocaleDateString('pt-BR');
+    // Tenta converter string para data
+    const d = new Date(dateInput);
+    return isNaN(d) ? '-' : d.toLocaleDateString('pt-BR');
 };
 
 // Formata Moeda
