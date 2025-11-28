@@ -97,7 +97,11 @@ const calculateTotalPreview = () => {
 const resetLaunchForm = () => {
     State.editingLaunchId = null;
     State.isVacationInput = false; 
-    
+
+    // ADICIONE ISSO PARA GARANTIR QUE DESTRAVA SE SAIR DO MODO FÉRIAS
+    document.getElementById('indices-container').style.opacity = '1';
+    document.getElementById('indices-container').style.pointerEvents = 'auto';
+    document.getElementById('base-value').readOnly = State.isSupervisor;
     document.getElementById('employee-select').value = "";
     document.getElementById('indices-container').innerHTML = '<p class="text-sm text-gray-500">Selecione um colaborador</p>';
     document.getElementById('total-calculated').textContent = "R$ 0,00";
@@ -111,6 +115,78 @@ const resetLaunchForm = () => {
         document.getElementById('base-value').value = val || '';
         if(!State.isMaster) document.getElementById('base-value').readOnly = true; 
     });
+};
+const deleteLaunch = (id) => {
+    // Define qual item será deletado para o Modal de Confirmação usar
+    const launch = State.history.find(h => h.id === id);
+    if (!launch) return;
+
+    State.itemToDelete = { 
+        id: id, 
+        type: 'launches',
+        // Precisamos guardar esses dados para recalcular a média do supervisor se deletar
+        month: launch.monthRef,
+        supervisorId: launch.launchedBySupervisor,
+        sectorId: launch.sectorId 
+    };
+    
+    UI.showModal('delete-confirm-modal');
+};
+const loadLaunchForEdit = async (id) => {
+    const launch = State.history.find(h => h.id === id);
+    if (!launch) return;
+
+    // 1. Define o ID que estamos editando
+    State.editingLaunchId = id;
+
+    // 2. Preenche os campos básicos
+    document.getElementById('month-ref').value = launch.monthRef;
+    document.getElementById('employee-select').value = launch.employeeId;
+    document.getElementById('base-value').value = launch.baseValue;
+
+    // 3. Verifica se era férias
+    if (launch.status === 'FÉRIAS') {
+        State.isVacationInput = true;
+        document.getElementById('base-value').readOnly = true;
+        document.getElementById('indices-container').style.opacity = '0.5';
+        document.getElementById('indices-container').style.pointerEvents = 'none';
+        UI.showAlert("Edição", "Editando lançamento de FÉRIAS.");
+    } else {
+        State.isVacationInput = false;
+        // Se for Master editando, libera o campo. Se for Supervisor, trava.
+        document.getElementById('base-value').readOnly = State.isSupervisor;
+        document.getElementById('indices-container').style.opacity = '1';
+        document.getElementById('indices-container').style.pointerEvents = 'auto';
+    }
+
+    // 4. Carrega os inputs de metas baseados no setor do colaborador
+    const emp = State.employees.find(e => e.id === launch.employeeId);
+    if (emp) {
+        const sec = State.sectors.find(s => s.id === emp.sectorId);
+        // Renderiza os inputs vazios primeiro
+        renderIndicesInputs(sec ? sec.indices : []);
+        
+        // 5. Preenche os valores das notas nos inputs
+        if (launch.scores && launch.scores.length > 0) {
+            launch.scores.forEach(savedScore => {
+                // Procura o input pelo data-name
+                const input = document.querySelector(`.score-input[data-name="${savedScore.name}"]`);
+                if (input) {
+                    input.value = savedScore.score;
+                }
+            });
+        }
+    }
+
+    // 6. Atualiza o total visual e muda os botões
+    calculateTotalPreview();
+    document.getElementById('total-calculated').textContent = Utils.formatCurrency(launch.totalValue);
+    
+    document.getElementById('btn-submit-launch').textContent = "Atualizar Lançamento";
+    document.getElementById('btn-cancel-edit').classList.remove('hidden');
+
+    // Rola a tela para o topo para ver o formulário
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 // --- INICIALIZAÇÃO ---
