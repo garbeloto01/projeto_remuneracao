@@ -25,7 +25,7 @@
         <div class="bg-white w-full max-w-sm p-8 rounded-lg shadow-xl border border-gray-200 relative">
             <!-- Logo também na tela de login para ficar bonito -->
             <div class="flex justify-center mb-6">
-                <img src="ETECC LOGO vermelho.png" alt="Logo ETECC" class="h-12 w-auto">
+                <img src="ETECC_LOGO_vermelho.png" alt="Logo ETECC" class="h-12 w-auto">
             </div>
             <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Remuneração Variável</h2>
             
@@ -56,7 +56,7 @@
             <div class="container mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <!-- LOGO AQUI: Substituí o SVG antigo pela imagem -->
-                    <img src="ETECC LOGO vermelho.png" alt="Logo ETECC" class="h-10 w-auto">
+                    <img src="ETECC_LOGO_vermelho.png" alt="Logo ETECC" class="h-10 w-auto">
                     <!-- <h1 class="text-xl font-bold text-gray-800">Ferramenta de Remuneração Variável</h1> -->
                 </div>
                 <div class="flex items-center gap-4">
@@ -134,7 +134,7 @@
                             <div>
                                 <label for="base-value" class="block text-sm font-medium text-gray-700">Valor Base Variável (R$)</label>
                                 <div class="mt-1 flex gap-2">
-                                    <input type="number" id="base-value" placeholder="Ex: 1000.00" class="flex-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                                    <input type="number" id="base-value" step="0.01" min="0" placeholder="Ex: 1000.00" class="flex-1 w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
                                     
                                     <button type="button" id="btn-save-base-value" class="hidden bg-green-600 text-white px-5 py-2 rounded-md font-semibold hover:bg-green-700 transition duration-150">Salvar</button>
                                     
